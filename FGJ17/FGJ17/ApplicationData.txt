@@ -5,11 +5,11 @@ Show FPS: 1
 Max FPS: 200
 VSync: 0
 MSAA: 4
-Master volume: 10000
-Music volume: 10000
-SFX volume: 10000
+Master volume: 100
+Music volume: 100
+SFX volume: 100
 Console text size: 12
-ConsoleTextAlpha (0-255): 900
+ConsoleTextAlpha (0-255): 255
 GUI text size: 12
 GUI text font path: Fonts/Anonymous.ttf
 Data directory: data/

@@ -1,22 +1,21 @@
 
 #pragma once
 
+#include "Environment.h"
+
 #include <ExtendedEngine/State.h>
 
-
-namespace spehs{ namespace audio{ class ActiveSoundSource; } class GameObject; }
 
 class GameState : public extspehs::VisualState
 {
 public:
 	GameState();
-	~GameState();
+	~GameState() override;
 
-	void init();
-	bool update();
+	void init() override;
+	bool update() override;
 
 private:
-	spehs::audio::ActiveSoundSource* sound;
-	spehs::GameObject* object;
+	Environment environment;
 };
 

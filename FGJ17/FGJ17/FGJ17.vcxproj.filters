@@ -13,30 +13,72 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Management">
+      <UniqueIdentifier>{f32584cc-2e42-4215-a8c7-34a9b97308ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game">
+      <UniqueIdentifier>{006ccdcf-b3e9-4661-b882-071eb508253c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game">
+      <UniqueIdentifier>{112bb6e1-8c50-49ff-b250-5cf6a7ca24a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Management">
+      <UniqueIdentifier>{02c528e5-429d-4beb-aece-fbef15d9cd06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Object/Component">
+      <UniqueIdentifier>{3d45903c-f951-4454-a022-a2502a3cd130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Object/Component">
+      <UniqueIdentifier>{1b9de06c-f4a2-4d34-ae54-14455d9f7d92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderContainer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="MusicManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderContainer.cpp">
+      <Filter>Source Files\Management</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Position3D.cpp">
+      <Filter>Source Files\Game\Object/Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectCreator.cpp">
+      <Filter>Source Files\Game\Object/Component</Filter>
+    </ClCompile>
+    <ClCompile Include="PseudoCamera.cpp">
+      <Filter>Source Files\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameState.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="MusicManager.h">
+      <Filter>Header Files\Management</Filter>
     </ClInclude>
     <ClInclude Include="ShaderContainer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Management</Filter>
     </ClInclude>
-    <ClInclude Include="MusicManager.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="GameState.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Position3D.h">
+      <Filter>Header Files\Game\Object/Component</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectCreator.h">
+      <Filter>Header Files\Game\Object/Component</Filter>
+    </ClInclude>
+    <ClInclude Include="PseudoCamera.h">
+      <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

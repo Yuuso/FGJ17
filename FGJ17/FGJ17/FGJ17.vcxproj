@@ -77,14 +77,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Environment.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MusicManager.cpp" />
+    <ClCompile Include="ObjectCreator.cpp" />
+    <ClCompile Include="Position3D.cpp" />
+    <ClCompile Include="PseudoCamera.cpp" />
     <ClCompile Include="ShaderContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Environment.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="MusicManager.h" />
+    <ClInclude Include="ObjectCreator.h" />
+    <ClInclude Include="Position3D.h" />
+    <ClInclude Include="PseudoCamera.h" />
     <ClInclude Include="ShaderContainer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

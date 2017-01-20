@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FGJ17", "FGJ17\FGJ17.vcxproj", "{931BBA36-993C-4F43-87E1-B8695994101D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FCE007AE-197F-4819-8FDF-28CB57863FDF} = {FCE007AE-197F-4819-8FDF-28CB57863FDF}
+		{545A88BB-7447-428B-8A73-A1E8F2BBDB33} = {545A88BB-7447-428B-8A73-A1E8F2BBDB33}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExtendedEngine", "..\..\Extended-SpehsEngine\ExtendedEngine\ExtendedEngine\ExtendedEngine.vcxproj", "{FCE007AE-197F-4819-8FDF-28CB57863FDF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{545A88BB-7447-428B-8A73-A1E8F2BBDB33} = {545A88BB-7447-428B-8A73-A1E8F2BBDB33}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpehsEngine", "..\..\SpehsEngine\SpehsEngine\SpehsEngine.vcxproj", "{545A88BB-7447-428B-8A73-A1E8F2BBDB33}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{931BBA36-993C-4F43-87E1-B8695994101D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{931BBA36-993C-4F43-87E1-B8695994101D}.Debug|Win32.Build.0 = Debug|Win32
+		{931BBA36-993C-4F43-87E1-B8695994101D}.Release|Win32.ActiveCfg = Release|Win32
+		{931BBA36-993C-4F43-87E1-B8695994101D}.Release|Win32.Build.0 = Release|Win32
+		{FCE007AE-197F-4819-8FDF-28CB57863FDF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FCE007AE-197F-4819-8FDF-28CB57863FDF}.Debug|Win32.Build.0 = Debug|Win32
+		{FCE007AE-197F-4819-8FDF-28CB57863FDF}.Release|Win32.ActiveCfg = Release|Win32
+		{FCE007AE-197F-4819-8FDF-28CB57863FDF}.Release|Win32.Build.0 = Release|Win32
+		{545A88BB-7447-428B-8A73-A1E8F2BBDB33}.Debug|Win32.ActiveCfg = Debug|Win32
+		{545A88BB-7447-428B-8A73-A1E8F2BBDB33}.Debug|Win32.Build.0 = Debug|Win32
+		{545A88BB-7447-428B-8A73-A1E8F2BBDB33}.Release|Win32.ActiveCfg = Release|Win32
+		{545A88BB-7447-428B-8A73-A1E8F2BBDB33}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

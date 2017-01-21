@@ -8,6 +8,9 @@
 #include <SpehsEngine/Transform2D.h>
 #include <SpehsEngine/Time.h>
 #include <SpehsEngine/RNG.h>
+#include <SpehsEngine/Polygon.h>
+#include <SpehsEngine/TextureManager.h>
+#include <SpehsEngine/ApplicationData.h>
 
 
 #define PI 3.14159265358f
@@ -20,6 +23,16 @@ float timerCounter(0.0f);
 
 Environment::Environment()
 {
+	float factorX = float(applicationData->getWindowHeight()) / 1920.0f;
+	background = spehs::Polygon::create(4, -10, 8000, 1920 * factorX);
+	background->setTexture(textureManager->getTextureData("Textures/background.png"));
+	background->setPosition(glm::vec2(4000.0f, 0.0f));
+	background2 = spehs::Polygon::create(4, -10, 8000, 1920 * factorX);
+	background2->setTexture(textureManager->getTextureData("Textures/background.png"));
+	background2->setPosition(glm::vec2(-4000.0f, 0.0f));
+	background3 = spehs::Polygon::create(4, -10, 8000, 1920 * factorX);
+	background3->setTexture(textureManager->getTextureData("Textures/background.png"));
+	background3->setPosition(glm::vec2(12000.0f, 0.0f));
 }
 Environment::~Environment()
 {

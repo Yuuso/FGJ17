@@ -1,11 +1,10 @@
 
 #pragma once
 
-#include "Environment.h"
-
 #include <ExtendedEngine/State.h>
 
 
+class Environment;
 class GameState : public extspehs::VisualState
 {
 public:
@@ -16,6 +15,6 @@ public:
 	bool update() override;
 
 private:
-	Environment environment;
+	Environment* environment = nullptr;
 };
 

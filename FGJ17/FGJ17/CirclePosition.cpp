@@ -59,7 +59,7 @@ void CirclePosition::setPosition(const glm::vec3& _pos)
 {
 	position = _pos;
 }
-void CirclePosition::setVelocity(const glm::vec3& _pos)
+void CirclePosition::setVelocity(const glm::vec3& _vel)
 {
-	velocity = _pos;
+	velocity = _vel;
 }

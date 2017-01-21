@@ -8,6 +8,8 @@ class Environment;
 class GameState : public extspehs::VisualState
 {
 public:
+	static GameState* instance;
+public:
 	GameState();
 	~GameState() override;
 

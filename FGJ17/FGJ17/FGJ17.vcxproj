@@ -77,9 +77,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="TargetLock.cpp" />
     <ClCompile Include="MusicManager.cpp" />
     <ClCompile Include="ObjectCreator.cpp" />
     <ClCompile Include="CirclePosition.cpp" />
@@ -87,8 +89,10 @@
     <ClCompile Include="WaveMotion.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cloud.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="TargetLock.h" />
     <ClInclude Include="MusicManager.h" />
     <ClInclude Include="ObjectCreator.h" />
     <ClInclude Include="CirclePosition.h" />

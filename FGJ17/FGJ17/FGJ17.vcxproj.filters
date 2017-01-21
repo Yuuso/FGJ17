@@ -57,6 +57,12 @@
     <ClCompile Include="WaveMotion.cpp">
       <Filter>Source Files\Game\Object/Component</Filter>
     </ClCompile>
+    <ClCompile Include="TargetLock.cpp">
+      <Filter>Source Files\Game\Object/Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Cloud.cpp">
+      <Filter>Source Files\Game\Object/Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MusicManager.h">
@@ -78,6 +84,12 @@
       <Filter>Header Files\Game\Object/Component</Filter>
     </ClInclude>
     <ClInclude Include="WaveMotion.h">
+      <Filter>Header Files\Game\Object/Component</Filter>
+    </ClInclude>
+    <ClInclude Include="TargetLock.h">
+      <Filter>Header Files\Game\Object/Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Cloud.h">
       <Filter>Header Files\Game\Object/Component</Filter>
     </ClInclude>
   </ItemGroup>

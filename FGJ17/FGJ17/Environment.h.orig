@@ -1,19 +1,13 @@
 
 #pragma once
-#define DAY_CYCLE_SECONDS 45.0f
-#define MAX_SPAWN_DISTANCE 100.0f
 
 #include <vector>
-#include <glm/vec3.hpp>
 
 
 namespace spehs{ class GameObject; class Polygon; }
 class Environment
 {
-	static glm::vec3 seaColor;
 	static float sunPosition;
-	static float light;
-	static int day;
 public:
 	Environment();
 	~Environment();
@@ -24,8 +18,7 @@ private:
 	std::vector<spehs::GameObject*> birds;
 	std::vector<spehs::GameObject*> potatos;
 	std::vector<spehs::GameObject*> waves;
-	std::vector<spehs::GameObject*> clouds;
-	std::vector<spehs::GameObject*> fishes;
+<<<<<<< HEAD
 	struct Background
 	{
 		Background(const float x);
@@ -40,9 +33,13 @@ private:
 	Background* backgroundLeft;
 	Background* backgroundCenter;
 	Background* backgroundRight;
+=======
+	std::vector<spehs::GameObject*> fishes;
+	spehs::Polygon* finger;
+	spehs::Polygon* background;
+	spehs::Polygon* background2;
+	spehs::Polygon* background3;
+>>>>>>> 8b7193bfc9951bbb57bf8bc78282c43126a8ba6a
 	spehs::Polygon* trumpet;
-	spehs::Polygon* fingerBase;
-	spehs::Polygon* fingerHighlight;
-	float fingerCooldown;
 };
 

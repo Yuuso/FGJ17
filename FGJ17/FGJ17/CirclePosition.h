@@ -17,9 +17,10 @@ public:
 	void update() override;
 
 	void setPosition(const glm::vec3& _pos);
-	void setVelocity(const glm::vec3& _pos);
+	void setVelocity(const glm::vec3& _vel);
 
 	glm::vec3 getPosition() const { return position; }
+	glm::vec3 getVelocity() const { return velocity; }
 
 private:
 	glm::vec3 position; //(circle x position, height, distance)

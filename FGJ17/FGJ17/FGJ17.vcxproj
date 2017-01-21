@@ -84,6 +84,7 @@
     <ClCompile Include="ObjectCreator.cpp" />
     <ClCompile Include="CirclePosition.cpp" />
     <ClCompile Include="ShaderContainer.cpp" />
+    <ClCompile Include="WaveMotion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Environment.h" />
@@ -92,6 +93,7 @@
     <ClInclude Include="ObjectCreator.h" />
     <ClInclude Include="CirclePosition.h" />
     <ClInclude Include="ShaderContainer.h" />
+    <ClInclude Include="WaveMotion.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

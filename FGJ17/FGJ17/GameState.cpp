@@ -9,8 +9,11 @@
 #include <SpehsEngine/Window.h>
 #include <SpehsEngine/SpehsEngine.h>
 #include <SpehsEngine/TextureManager.h>
+#include <SpehsEngine/ApplicationData.h>
 
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 #define PI 3.14159265358f
 
@@ -37,6 +40,9 @@ void GameState::init()
 
 	textureManager->preloadTexture("Textures/bird.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
 	textureManager->preloadTexture("Textures/background.png", spehs::TextureFiltering::Linear, spehs::TextureFiltering::Linear);
+	textureManager->preloadTexture("Textures/waves.png", spehs::TextureFiltering::Linear, spehs::TextureFiltering::Linear);
+	textureManager->preloadTexture("Textures/potato.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
+	textureManager->preloadTexture("Textures/trump.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
 
 	environment = new Environment;
 }
@@ -60,13 +66,15 @@ bool GameState::update()
 	{
 		cameraRotation += movementSpeed * spehs::time::getDeltaTimeAsSeconds();
 	}
-
+	if (abs(inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) > applicationData->getWindowWidthHalf() / 2.0f)
+	{
+		cameraRotation += spehs::time::getDeltaTimeAsSeconds() * (inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) * 0.003f;
+	}
+	
 	if (cameraRotation > 2.0f * PI)
 		cameraRotation = 0.0f;
 	if (cameraRotation < 0.0f)
 		cameraRotation = 2.0f * PI;
-
-	std::cout << cameraRotation << std::endl;
 
 	camera->position = glm::vec2(cameraRotation * rotationToPosition, 0.0f);
 	camera->update();

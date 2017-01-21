@@ -54,6 +54,9 @@
     <ClCompile Include="CirclePosition.cpp">
       <Filter>Source Files\Game\Object/Component</Filter>
     </ClCompile>
+    <ClCompile Include="WaveMotion.cpp">
+      <Filter>Source Files\Game\Object/Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MusicManager.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files\Game\Object/Component</Filter>
     </ClInclude>
     <ClInclude Include="CirclePosition.h">
+      <Filter>Header Files\Game\Object/Component</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveMotion.h">
       <Filter>Header Files\Game\Object/Component</Filter>
     </ClInclude>
   </ItemGroup>

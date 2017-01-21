@@ -28,21 +28,53 @@ extern const float rotationToPosition;
 const float SPAWN_RADIUS(100.0f);
 const float SPAWN_TIMER(1.0f);
 float timerCounter(0.0f);
+const int backgroundDepth = -10000;
+float Environment::sunPosition = 0.0f;
 
+Environment::Background::Background(const float x)
+{
+	sea = spehs::Polygon::create(spehs::Shape::BUTTON, backgroundDepth, 8000, applicationData->getWindowHeightHalf());
+	sea->setColor(0, 200, 255, 255);
+	sea->setPosition(x, -applicationData->getWindowHeightHalf());
+	seaShade = spehs::Polygon::create(spehs::Shape::BUTTON, backgroundDepth + 1, 8000, applicationData->getWindowHeightHalf());
+	seaShade->setPosition(sea->getX(), sea->getY());
+	sky = spehs::Polygon::create(spehs::Shape::BUTTON, backgroundDepth, 8000, applicationData->getWindowHeightHalf());
+	sky->setColor(150, 200, 255, 255);
+	sky->setPosition(x, 0.0f);
+	skyShade = spehs::Polygon::create(spehs::Shape::BUTTON, backgroundDepth + 2, 8000, applicationData->getWindowHeightHalf());
+	skyShade->setPosition(sky->getX(), sky->getY());
+	stars = spehs::Polygon::create(spehs::Shape::BUTTON, backgroundDepth + 1, 8000.0f, 540.0f);
+	stars->setPosition(sky->getX(), sky->getY());
+	stars->setTexture("Textures/stars.png");
+}
+Environment::Background::~Background()
+{
+	sea->destroy();
+	seaShade->destroy();
+	sky->destroy();
+	skyShade->destroy();
+	stars->destroy();
+}
+void Environment::Background::update()
+{
+	const float light = (sin(Environment::sunPosition) + 1.0f ) * 0.5f;
+	sea->setColor(0, 0, unsigned char(255 * light), 255);
+	seaShade->setColor(0, 0, unsigned char(128 * light), 255);
+	seaShade->worldVertexArray[0].color.rgba.a = 0.0f;
+	seaShade->worldVertexArray[1].color.rgba.a = 0.0f;
+	sky->setColor(unsigned char(150 * light), unsigned char(200 * light), unsigned char(255 * light), 255);
+	skyShade->setColor(128 + unsigned char(127 * sin(Environment::sunPosition)), 128 + unsigned char(127 * sin(Environment::sunPosition)), 128 + unsigned char(127 * sin(Environment::sunPosition)), 255);
+	skyShade->worldVertexArray[2].color.rgba.a = 0.0f;
+	skyShade->worldVertexArray[3].color.rgba.a = 0.0f;
+	//stars->setColorAlpha((float)std::powf(1.0f - light, 1.5f));
+}
 
 Environment::Environment()
 {
 	float factorX = float(applicationData->getWindowHeight()) / 1920.0f;
-	int backgroundDepth = -10000;
-	background = spehs::Polygon::create(4, backgroundDepth, 8000, 1920 * factorX);
-	background->setTexture(textureManager->getTextureData("Textures/background.png"));
-	background->setPosition(glm::vec2(4000.0f, 0.0f));
-	background2 = spehs::Polygon::create(4, backgroundDepth, 8000, 1920 * factorX);
-	background2->setTexture(textureManager->getTextureData("Textures/background.png"));
-	background2->setPosition(glm::vec2(-4000.0f, 0.0f));
-	background3 = spehs::Polygon::create(4, backgroundDepth, 8000, 1920 * factorX);
-	background3->setTexture(textureManager->getTextureData("Textures/background.png"));
-	background3->setPosition(glm::vec2(12000.0f, 0.0f));
+	backgroundLeft = new Background(-4000.0f);
+	backgroundCenter = new Background(4000.0f);
+	backgroundRight = new Background(12000.0f);
 
 	trumpet = spehs::Polygon::create(4, backgroundDepth, applicationData->getWindowWidth() / 2.0f, applicationData->getWindowWidth() / 2.0f * factorX);
 	trumpet->setTexture(textureManager->getTextureData("Textures/trump.png"));
@@ -60,10 +92,20 @@ Environment::Environment()
 }
 Environment::~Environment()
 {
+	delete backgroundLeft;
+	delete backgroundCenter;
+	delete backgroundRight;
 }
 
 void Environment::update()
 {
+	sunPosition += spehs::time::getDeltaTimeAsSeconds() * TWO_PI / 20.0f/*Total day length in seconds*/;
+	while (sunPosition > TWO_PI)
+		sunPosition -= TWO_PI;
+	backgroundLeft->update();
+	backgroundCenter->update();
+	backgroundRight->update();
+
 	timerCounter -= spehs::time::getDeltaTimeAsSeconds();
 	if (timerCounter < 0.0f)
 	{

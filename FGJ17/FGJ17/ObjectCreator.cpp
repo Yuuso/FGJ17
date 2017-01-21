@@ -42,3 +42,12 @@ spehs::GameObject* ObjectCreator::createWaves()
 
 	return result;
 }
+spehs::GameObject* ObjectCreator::createFish()
+{
+	spehs::GameObject* result = new spehs::GameObject;
+	result->addComponent<spehs::Transform2D>();
+	result->addComponent<spehs::Sprite>();
+	result->addComponent<CirclePosition>();
+
+	return result;
+}

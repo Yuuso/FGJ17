@@ -43,6 +43,8 @@ void GameState::init()
 	textureManager->preloadTexture("Textures/waves.png", spehs::TextureFiltering::Linear, spehs::TextureFiltering::Linear);
 	textureManager->preloadTexture("Textures/potato.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
 	textureManager->preloadTexture("Textures/trump.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
+	textureManager->preloadTexture("Textures/finger.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
+	textureManager->preloadTexture("Textures/fish.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
 
 	environment = new Environment;
 }

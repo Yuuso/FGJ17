@@ -4,7 +4,7 @@
 #include <vector>
 
 
-namespace spehs{ class GameObject; }
+namespace spehs{ class GameObject; class Polygon; }
 class Environment
 {
 public:
@@ -15,5 +15,8 @@ public:
 
 private:
 	std::vector<spehs::GameObject*> objects;
+	spehs::Polygon* background;
+	spehs::Polygon* background2;
+	spehs::Polygon* background3;
 };
 

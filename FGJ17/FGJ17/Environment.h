@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include "PseudoCamera.h"
-
 #include <vector>
 
 
@@ -16,7 +14,6 @@ public:
 	void update();
 
 private:
-	PseudoCamera camera;
 	std::vector<spehs::GameObject*> objects;
 };
 

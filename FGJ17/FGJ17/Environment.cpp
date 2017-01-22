@@ -25,6 +25,7 @@
 #include <SpehsEngine/CommonColor.h>
 #include <SpehsEngine/SoundSource.h>
 #include <SpehsEngine/AudioManager.h>
+#include <SpehsEngine/AudioEngine.h>
 
 #include <algorithm>
 #include <iostream>
@@ -34,11 +35,11 @@
 
 //~~~~~~~~TODO~~~~~~~
 /*
-- waves
-- middle finger charges
+- waves!
+- finger charges
 - music
 - sun/moon
-- start/end screens
+- credits
 */
 
 
@@ -54,12 +55,13 @@ const float RANDOM_MAGICAL_NIGHT_COLOR_VALUE(0.1f);
 const float LOW_WATERS(500.0f);
 const float BIRD_DAMAGE(0.05f);
 const float BIRD_HEALING(0.5f);
-glm::vec3 Environment::seaColor;
+const float FISH_SPAWN_FREQ(0.1f);
+glm::vec3 seaColor;
 float timerCounter(0.0f);
 const int backgroundDepth = -10000;
-float Environment::sunPosition = 0.0f;
-float Environment::light = 1.0f;
-int Environment::day = 1;
+float sunPosition = 0.0f;
+float light = 1.0f;
+int day = 1;
 
 Environment::Background::Background(const float x)
 {
@@ -204,6 +206,7 @@ Environment::Environment() : fingerCooldown(0.0f)
 
 	waveSounds = new spehs::audio::SoundSource;
 	waveSounds->setLooping(true);
+	waveSounds->setGain(0.0f);
 	waveSounds->setPriority(0);
 	waveSounds->setSound(spehs::AudioManager::instance->loadWAVE("Sounds/aallot.wav"));
 	waveSounds->play();
@@ -219,6 +222,46 @@ Environment::~Environment()
 	delete backgroundRight;
 
 	//todo delete rest...
+	for (unsigned i = 0; i < birds.size(); i++)
+	{
+		delete birds[i];
+	}
+	for (unsigned i = 0; i < potatos.size(); i++)
+	{
+		delete potatos[i];
+	}
+	for (unsigned i = 0; i < waves.size(); i++)
+	{
+		delete waves[i];
+	}
+	for (unsigned i = 0; i < clouds.size(); i++)
+	{
+		delete clouds[i];
+	}
+	for (unsigned i = 0; i < fishes.size(); i++)
+	{
+		delete fishes[i];
+	}
+	for (unsigned i = 0; i < hitmarkers.size(); i++)
+	{
+		delete hitmarkers[i];
+	}
+	trumpet->destroy();
+	snare->destroy();
+	snareLine->destroy();
+	delete bobber;
+	delete caught;
+	fingerBase->destroy();
+	fingerHighlight->destroy();
+	foodBar->destroy();
+	foodLogo->destroy();
+	ammunitionBar->destroy();
+	ammunitionLogo->destroy();
+	delete buyButton;
+	casette->destroy();
+	delete speech;
+	delete music;
+	delete waveSounds;
 }
 
 void Environment::update()
@@ -230,12 +273,43 @@ void Environment::update()
 		sunPosition -= TWO_PI;
 		day++;
 	}
-	light = std::powf(std::max(MIN_LIGHT, sin(Environment::sunPosition)), 0.8f);
+	light = std::powf(std::max(MIN_LIGHT, sin(sunPosition)), 0.8f);
 	backgroundLeft->update();
 	backgroundCenter->update();
 	backgroundRight->update();
 	Cloud::baseColor = glm::vec3(std::powf(light, 0.9f) * 0.85f, std::powf(light, 1.1f) * 0.85f, std::powf(light, 1.3f) * 1.0f);
 	Cloud::highlightColor = glm::vec3(std::powf(light, 0.4f) * 0.85f, std::powf(light, 0.7f) * 0.85f, std::powf(light, 0.9f) * 1.0f);
+	waveSounds->setGain(spehs::lerp(waveSounds->getGain(), 1.0f, 0.2f * spehs::time::getDeltaTimeAsSeconds()));
+
+	if (food <= 0.0f)
+	{
+		if (!dead)
+		{
+			sfxManager.playSound("Sounds/death.wav", spehs::audio::AudioEngine::getListenerPosition(), 1.0f, 1.0f, 4.0f);
+			score = day - 1;
+
+			foodBar->setRenderState(false);
+			ammunitionBar->setRenderState(false);
+			ammunitionLogo->setRenderState(false);
+			foodLogo->setRenderState(false);
+			buyButton->setRenderState(false);
+
+			trumpet->setRenderState(false);
+			snare->setRenderState(false);
+
+			dead = true;
+		}
+		casette->setRenderState(false);
+		snareLine->setRenderState(false);
+		bobber->getComponent<spehs::Sprite>()->setRenderState(false);
+		if (caught)
+		{
+			caught->getComponent<spehs::Sprite>()->setRenderState(false);
+		}
+
+		music->setGain(spehs::lerp(music->getGain(), 0.0f, 0.4f * spehs::time::getDeltaTimeAsSeconds()));
+		speech->setGain(spehs::lerp(speech->getGain(), 0.0f, 0.4f * spehs::time::getDeltaTimeAsSeconds()));
+	}
 
 	timerCounter -= spehs::time::getDeltaTimeAsSeconds();
 	if (sin(sunPosition + TWO_PI / DAY_CYCLE_SECONDS * 2.0f/*Seconds spawning begins/ends in advance*/) < 0.2f)
@@ -270,211 +344,219 @@ void Environment::update()
 	}
 
 
-	buyButton->inputUpdate();
+	if (!dead)
+	{
+		buyButton->inputUpdate();
 
-	foodBar->resize(food * 10.0f, foodBar->getHeight());
-	foodBar->setPosition(applicationData->getWindowWidth() - 100.0f - foodBar->getWidth() / 2.0f, applicationData->getWindowHeight() - 40.0f);
+		foodBar->resize(food * 10.0f, foodBar->getHeight());
+		foodBar->setPosition(applicationData->getWindowWidth() - 100.0f - foodBar->getWidth() / 2.0f, applicationData->getWindowHeight() - 40.0f);
 
-	ammunitionBar->resize(ammunition * 3.0f, ammunitionBar->getHeight());
-	ammunitionBar->setPosition(applicationData->getWindowWidth() - 100.0f - ammunitionBar->getWidth() / 2.0f, applicationData->getWindowHeight() - 140.0f);
+		ammunitionBar->resize(ammunition * 3.0f, ammunitionBar->getHeight());
+		ammunitionBar->setPosition(applicationData->getWindowWidth() - 100.0f - ammunitionBar->getWidth() / 2.0f, applicationData->getWindowHeight() - 140.0f);
+	}
 
 	
 
-	if (inputManager->isKeyPressed(MOUSEBUTTON_RIGHT))
+	if (!dead)
 	{
-		tool = !tool;
-		fishing = false;
-		catchingFish = false;
-		snareLine->setRenderState(false);
-		bobber->getComponent<spehs::Sprite>()->setRenderState(false);
-	}
-
-	if (tool)
-	{
-		trumpet->setPosition(spehs::lerp(trumpet->getPosition(), trumpet->getPosition() + glm::vec2(0.0f, -applicationData->getWindowHeight()), 0.1f));
-		snare->setPosition(spehs::lerp(snare->getPosition(), glm::vec2((inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) + spehs::getActiveBatchManager()->getCamera2D()->position.x, spehs::lerp(snare->getPosition().y, (float) -applicationData->getWindowHeightHalf() * 0.5f, 0.2f)), 0.5f));
-		if (fishing)
+		if (inputManager->isKeyPressed(MOUSEBUTTON_RIGHT))
 		{
-			snare->setRotation(spehs::lerp(snare->getRotation(), 0.15f, 0.1f));
+			tool = !tool;
+			fishing = false;
+			catchingFish = false;
+			snareLine->setRenderState(false);
+			bobber->getComponent<spehs::Sprite>()->setRenderState(false);
 		}
-		else
-		{
-			snare->setRotation(spehs::lerp(snare->getRotation(), 0.0f, 0.1f));
-		}
-	}
-	else
-	{
-		trumpet->setPosition(spehs::lerp(trumpet->getPosition(), glm::vec2((inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) + spehs::getActiveBatchManager()->getCamera2D()->position.x, spehs::lerp(trumpet->getPosition().y, (float) -applicationData->getWindowHeightHalf() * 1.2f, 0.2f)), 0.5f));
-		snare->setPosition(spehs::lerp(snare->getPosition(), snare->getPosition() + glm::vec2(0.0f, -applicationData->getWindowHeight()), 0.1f));
-	}
 
-	if (inputManager->isKeyPressed(MOUSEBUTTON_LEFT) && !buyButton->getMouseHover())
-	{
-		if (!tool)
+		if (tool)
 		{
-			if (ammunition > 0)
-			{
-				potatos.push_back(ObjectCreator::createPotato());
-				potatos.back()->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/potato.png"));
-				potatos.back()->getComponent<spehs::Sprite>()->setColor(glm::vec3(spehs::rng::frandom(0.75f, 1.0f)));
-				potatos.back()->getComponent<CirclePosition>()->setPosition(glm::vec3(spehs::getActiveBatchManager()->getCamera2D()->position.x / rotationToPosition + (inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) / rotationToPosition, 0.0, 0.2f));
-				potatos.back()->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f, 200.0f, spehs::rng::frandom(1.0f, 5.0f)));
-				potatos.back()->getComponent<spehs::Transform2D>()->setRotation(spehs::rng::frandom(0.0f, 6.0f));
-				potatos.back()->update();
-
-				trumpet->setPosition(trumpet->getPosition().x, -applicationData->getWindowHeightHalf() * 0.3f);
-				ammunition--;
-
-				sfxManager.playSound("Sounds/shoot.wav", trumpet->getPosition(), 1.2f);
-			}
-		}
-		else
-		{
+			trumpet->setPosition(spehs::lerp(trumpet->getPosition(), trumpet->getPosition() + glm::vec2(0.0f, -applicationData->getWindowHeight()), 0.1f));
+			snare->setPosition(spehs::lerp(snare->getPosition(), glm::vec2((inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) + spehs::getActiveBatchManager()->getCamera2D()->position.x, spehs::lerp(snare->getPosition().y, (float) -applicationData->getWindowHeightHalf() * 0.5f, 0.2f)), 0.5f));
 			if (fishing)
 			{
-				snare->setPosition(snare->getPosition().x, -applicationData->getWindowHeightHalf() * 0.6f);
-				snare->setRotation(-0.25f);
-
-				fishing = false;
-				snareLine->setRenderState(false);
-				bobber->getComponent<spehs::Sprite>()->setRenderState(false);
-				if (catchingFish)
-				{
-					caught = ObjectCreator::createPotato();//wat ever
-					if (!spehs::rng::irandom(0, 0) && !casetteActive)
-					{
-						caught->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/casette.png"));
-						casetteActive = true;
-						int speechNum = spehs::rng::irandom(1, 7);
-						speech->setSound(spehs::AudioManager::instance->loadWAVE("Sounds/speech" + std::to_string(speechNum) + ".wav"));
-						speech->play();
-						music->setGain(0.3f);
-					}
-					else
-					{
-						caught->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/fish.png"));
-						food++;
-					}
-					caught->getComponent<CirclePosition>()->setPosition(bobber->getComponent<CirclePosition>()->getPosition());
-					caught->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f, 1000.0f, -2.0f));
-					caught->getComponent<spehs::Transform2D>()->setRotation(PI / 2.0f);
-
-					sfxManager.playSound("Sounds/fishjump.wav", caught->getComponent<spehs::Transform2D>()->getPosition(), caught->getComponent<CirclePosition>()->getPosition().z, 0.9f, 3.5f);
-				}
-				catchingFish = false;
+				snare->setRotation(spehs::lerp(snare->getRotation(), 0.15f, 0.1f));
 			}
 			else
 			{
-				snare->setPosition(snare->getPosition().x, -applicationData->getWindowHeightHalf() * 0.3f);
-				snare->setRotation(0.25f);
-				fishing = true;
-				catchingFish = false;
-				snareLine->setRenderState(true);
-				bobber->getComponent<spehs::Sprite>()->setRenderState(true);
-				bobber->getComponent<CirclePosition>()->setPosition(glm::vec3(spehs::getActiveBatchManager()->getCamera2D()->position.x / rotationToPosition + (inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) / rotationToPosition, 0.0, 0.2f));
-				bobber->getComponent<CirclePosition>()->setVelocity(glm::vec3(spehs::rng::frandom(-0.1f, 0.1f), 400.0f, spehs::rng::frandom(3.0f, 6.0f)));
-				bobber->getComponent<spehs::Sprite>()->updateVertices();
-				fishTimer = spehs::rng::frandom(1.5f, 4.0f);
-
-				sfxManager.playSound("Sounds/siima.wav", snare->getPosition(), 1.2f);
+				snare->setRotation(spehs::lerp(snare->getRotation(), 0.0f, 0.1f));
 			}
 		}
-	}
-
-	if (fishing)
-	{
-		bobber->update();
-		snareLine->setPoints(snare->worldVertexArray[1].position, bobber->getComponent<spehs::Sprite>()->getSpritePolygon()->worldVertexArray[1].position);
-		bobber->getComponent<CirclePosition>()->setVelocity(bobber->getComponent<CirclePosition>()->getVelocity() + glm::vec3(0.0f, -3500.0f * spehs::time::getDeltaTimeAsSeconds(), 0.0f));
-		bobber->getComponent<spehs::Sprite>()->setDepth(-bobber->getComponent<CirclePosition>()->getPosition().z);
-		float alpha = std::min(0.0f, std::max(-LOW_WATERS, bobber->getComponent<CirclePosition>()->getPosition().y));
-		bobber->getComponent<spehs::Sprite>()->setColorAlpha((LOW_WATERS + alpha) / LOW_WATERS);
-		if (bobber->getComponent<CirclePosition>()->getPosition().y < -250.0f)
+		else
 		{
-			bobber->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f));
+			trumpet->setPosition(spehs::lerp(trumpet->getPosition(), glm::vec2((inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) + spehs::getActiveBatchManager()->getCamera2D()->position.x, spehs::lerp(trumpet->getPosition().y, (float) -applicationData->getWindowHeightHalf() * 1.2f, 0.2f)), 0.5f));
+			snare->setPosition(spehs::lerp(snare->getPosition(), snare->getPosition() + glm::vec2(0.0f, -applicationData->getWindowHeight()), 0.1f));
 		}
 
-		static glm::vec3 bobberPlace;
-		fishTimer -= spehs::time::getDeltaTimeAsSeconds();
-		if (fishTimer <= 0.0f && !catchingFish)
+		if (inputManager->isKeyPressed(MOUSEBUTTON_LEFT) && !buyButton->getMouseHover())
 		{
-			sfxManager.playSound("Sounds/blub1.wav", bobber->getComponent<spehs::Transform2D>()->getPosition(), bobber->getComponent<CirclePosition>()->getPosition().z, 0.85f, 3.0f);
-
-			catchingFish = true;
-			bobberPlace = bobber->getComponent<CirclePosition>()->getPosition() - glm::vec3(0.0f, 200.0f, 0.0f);
-		}
-
-		if (catchingFish)
-		{
-			bobber->getComponent<CirclePosition>()->setPosition(spehs::lerp(bobber->getComponent<CirclePosition>()->getPosition(), bobberPlace, 0.15f));
-		}
-	}
-	if (caught)
-	{
-		caught->update();
-		caught->getComponent<CirclePosition>()->setVelocity(caught->getComponent<CirclePosition>()->getVelocity() + glm::vec3(0.0f, -1000.0f * spehs::time::getDeltaTimeAsSeconds(), 0.0f));
-
-		if (caught->getComponent<CirclePosition>()->getPosition().z < 0.2f)
-		{
-			sfxManager.playSound("Sounds/bling2.wav", spehs::getActiveBatchManager()->getCamera2D()->position, 1.0f);
-			delete caught;
-			caught = nullptr;
-		}
-	}
-
-
-	if (casetteActive)
-	{
-		casette->setRenderState(true);
-
-		if (!speech->isPlaying())
-		{
-			casetteActive = false;
-		}
-		music->setGain(spehs::lerp(music->getGain(), 1.0f, 0.1f));
-	}
-	else
-	{
-		casette->setRenderState(false);
-		music->setGain(spehs::lerp(music->getGain(), 1.0f, 0.1f));
-	}
-
-	
-	//THE FINGER
-	fingerCooldown -= spehs::time::getDeltaTimeAsSeconds();
-	if (inputManager->isKeyDown(MOUSEBUTTON_MIDDLE))
-	{
-		fingerBase->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerBase->getPosition().y, (float)-applicationData->getWindowHeightHalf() / 2.0f, 0.2f));
-		fingerHighlight->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerHighlight->getPosition().y, (float)-applicationData->getWindowHeightHalf() / 2.0f, 0.2f));
-		if (fingerCooldown <= 0.0f)
-		{
-			fingerCooldown = 0.125f;
-			for (unsigned i = 0; i < birds.size(); i++)
+			if (!tool)
 			{
-				float angleToBird = birds[i]->getComponent<CirclePosition>()->getPosition().x - GameState::instance->getCamera().position.x / rotationToPosition;
-				while (abs(angleToBird) > PI)
-					angleToBird -= TWO_PI * /*sign*/(abs(angleToBird) / angleToBird);
-				if (abs(angleToBird) < PI * 0.1f)
-				{//Bird within field of view
-					if (birds[i]->getComponent<TargetLock>() == nullptr)
-						birds[i]->addComponent<TargetLock>();
+				if (ammunition > 0)
+				{
+					potatos.push_back(ObjectCreator::createPotato());
+					potatos.back()->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/potato.png"));
+					potatos.back()->getComponent<spehs::Sprite>()->setColor(glm::vec3(spehs::rng::frandom(0.75f, 1.0f)));
+					potatos.back()->getComponent<CirclePosition>()->setPosition(glm::vec3(spehs::getActiveBatchManager()->getCamera2D()->position.x / rotationToPosition + (inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) / rotationToPosition, 0.0, 0.2f));
+					potatos.back()->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f, 200.0f, spehs::rng::frandom(1.0f, 5.0f)));
+					potatos.back()->getComponent<spehs::Transform2D>()->setRotation(spehs::rng::frandom(0.0f, 6.0f));
+					potatos.back()->update();
+
+					trumpet->setPosition(trumpet->getPosition().x, -applicationData->getWindowHeightHalf() * 0.3f);
+					ammunition--;
+
+					sfxManager.playSound("Sounds/shoot.wav", trumpet->getPosition(), 1.2f);
+				}
+			}
+			else
+			{
+				if (fishing)
+				{
+					snare->setPosition(snare->getPosition().x, -applicationData->getWindowHeightHalf() * 0.6f);
+					snare->setRotation(-0.25f);
+
+					fishing = false;
+					snareLine->setRenderState(false);
+					bobber->getComponent<spehs::Sprite>()->setRenderState(false);
+					if (catchingFish)
+					{
+						caught = ObjectCreator::createPotato();//wat ever
+						if (!spehs::rng::irandom(0, 10) && !casetteActive)
+						{
+							caught->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/casette.png"));
+							casetteActive = true;
+							int speechNum = spehs::rng::irandom(1, 7);
+							speech->setSound(spehs::AudioManager::instance->loadWAVE("Sounds/speech" + std::to_string(speechNum) + ".wav"));
+							speech->play();
+							music->setGain(0.3f);
+						}
+						else
+						{
+							caught->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/fish.png"));
+							food++;
+						}
+						caught->getComponent<CirclePosition>()->setPosition(bobber->getComponent<CirclePosition>()->getPosition());
+						caught->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f, 1000.0f, -2.0f));
+						caught->getComponent<spehs::Transform2D>()->setRotation(PI / 2.0f);
+
+						sfxManager.playSound("Sounds/fishjump.wav", caught->getComponent<spehs::Transform2D>()->getPosition(), caught->getComponent<CirclePosition>()->getPosition().z, 0.9f, 3.5f);
+					}
+					catchingFish = false;
+				}
+				else
+				{
+					snare->setPosition(snare->getPosition().x, -applicationData->getWindowHeightHalf() * 0.3f);
+					snare->setRotation(0.25f);
+					fishing = true;
+					catchingFish = false;
+					snareLine->setRenderState(true);
+					bobber->getComponent<spehs::Sprite>()->setRenderState(true);
+					bobber->getComponent<CirclePosition>()->setPosition(glm::vec3(spehs::getActiveBatchManager()->getCamera2D()->position.x / rotationToPosition + (inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) / rotationToPosition, 0.0, 0.2f));
+					bobber->getComponent<CirclePosition>()->setVelocity(glm::vec3(spehs::rng::frandom(-0.1f, 0.1f), 400.0f, spehs::rng::frandom(3.0f, 6.0f)));
+					bobber->getComponent<spehs::Sprite>()->updateVertices();
+					fishTimer = spehs::rng::frandom(1.5f, 4.0f);
+
+					sfxManager.playSound("Sounds/siima.wav", snare->getPosition(), 1.2f);
 				}
 			}
 		}
-	}
-	else
+
+		if (fishing)
+		{
+			bobber->update();
+			snareLine->setPoints(snare->worldVertexArray[1].position, bobber->getComponent<spehs::Sprite>()->getSpritePolygon()->worldVertexArray[1].position);
+			bobber->getComponent<CirclePosition>()->setVelocity(bobber->getComponent<CirclePosition>()->getVelocity() + glm::vec3(0.0f, -3500.0f * spehs::time::getDeltaTimeAsSeconds(), 0.0f));
+			bobber->getComponent<spehs::Sprite>()->setDepth(-bobber->getComponent<CirclePosition>()->getPosition().z);
+			float alpha = std::min(0.0f, std::max(-LOW_WATERS, bobber->getComponent<CirclePosition>()->getPosition().y));
+			bobber->getComponent<spehs::Sprite>()->setColorAlpha((LOW_WATERS + alpha) / LOW_WATERS);
+			if (bobber->getComponent<CirclePosition>()->getPosition().y < -250.0f)
+			{
+				bobber->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f));
+			}
+
+			static glm::vec3 bobberPlace;
+			fishTimer -= spehs::time::getDeltaTimeAsSeconds();
+			if (fishTimer <= 0.0f && !catchingFish)
+			{
+				sfxManager.playSound("Sounds/blub1.wav", bobber->getComponent<spehs::Transform2D>()->getPosition(), bobber->getComponent<CirclePosition>()->getPosition().z, 0.85f, 3.0f);
+
+				catchingFish = true;
+				bobberPlace = bobber->getComponent<CirclePosition>()->getPosition() - glm::vec3(0.0f, 200.0f, 0.0f);
+			}
+
+			if (catchingFish)
+			{
+				bobber->getComponent<CirclePosition>()->setPosition(spehs::lerp(bobber->getComponent<CirclePosition>()->getPosition(), bobberPlace, 0.15f));
+			}
+		}
+		if (caught)
+		{
+			caught->update();
+			caught->getComponent<CirclePosition>()->setVelocity(caught->getComponent<CirclePosition>()->getVelocity() + glm::vec3(0.0f, -1000.0f * spehs::time::getDeltaTimeAsSeconds(), 0.0f));
+
+			if (caught->getComponent<CirclePosition>()->getPosition().z < 0.2f)
+			{
+				sfxManager.playSound("Sounds/bling2.wav", spehs::getActiveBatchManager()->getCamera2D()->position, 1.0f);
+				delete caught;
+				caught = nullptr;
+			}
+		}
+
+
+		if (casetteActive)
+		{
+			casette->setRenderState(true);
+
+			if (!speech->isPlaying())
+			{
+				casetteActive = false;
+			}
+			music->setGain(spehs::lerp(music->getGain(), applicationData->musicVolume * 0.3f, 0.1f));
+		}
+		else
+		{
+			casette->setRenderState(false);
+			music->setGain(spehs::lerp(music->getGain(), applicationData->musicVolume, 0.1f));
+		}
+
+
+		//THE FINGER
+		fingerCooldown -= spehs::time::getDeltaTimeAsSeconds();
+		if (inputManager->isKeyDown(MOUSEBUTTON_MIDDLE))
+		{
+			fingerBase->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerBase->getPosition().y, (float) -applicationData->getWindowHeightHalf() / 2.0f, 0.2f));
+			fingerHighlight->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerHighlight->getPosition().y, (float) -applicationData->getWindowHeightHalf() / 2.0f, 0.2f));
+			if (fingerCooldown <= 0.0f)
+			{
+				fingerCooldown = 0.125f;
+				for (unsigned i = 0; i < birds.size(); i++)
+				{
+					float angleToBird = birds[i]->getComponent<CirclePosition>()->getPosition().x - GameState::instance->getCamera().position.x / rotationToPosition;
+					while (abs(angleToBird) > PI)
+						angleToBird -= TWO_PI * /*sign*/(abs(angleToBird) / angleToBird);
+					if (abs(angleToBird) < PI * 0.1f)
+					{//Bird within field of view
+						if (birds[i]->getComponent<TargetLock>() == nullptr)
+							birds[i]->addComponent<TargetLock>();
+					}
+				}
+			}
+		}
+		else
+		{
+			fingerBase->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerBase->getPosition().y, (float) -applicationData->getWindowHeight(), 0.2f));
+			fingerHighlight->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerHighlight->getPosition().y, (float) -applicationData->getWindowHeight(), 0.2f));
+		}
+		fingerBase->setColor(glm::vec3(0.2f * std::powf(light, 0.6f), 0.25f * light, 0.22f * light));
+		fingerHighlight->setColor(glm::vec3(0.6f + 0.3f * light, std::powf(light, 0.7f), 0.15f + 0.6f * std::powf(light, 0.85f)));
+
+		trumpet->setColor(glm::vec3(0.4f + 0.6f * light, std::powf(light, 0.75f), 0.15f + 0.85f * std::powf(light, 1.5f)));
+	}//if !dead
+
+	fishSpawnTimer -= spehs::time::getDeltaTimeAsSeconds();
+	if (fishSpawnTimer < 0.0f)
 	{
-		fingerBase->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerBase->getPosition().y, (float)-applicationData->getWindowHeight(), 0.2f));
-		fingerHighlight->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerHighlight->getPosition().y, (float)-applicationData->getWindowHeight(), 0.2f));
-	}
-	fingerBase->setColor(glm::vec3(0.2f * std::powf(light, 0.6f), 0.25f * light, 0.22f * light));
-	fingerHighlight->setColor(glm::vec3(0.6f + 0.3f * light, std::powf(light, 0.7f), 0.15f + 0.6f * std::powf(light, 0.85f)));
+		fishSpawnTimer = FISH_SPAWN_FREQ + spehs::rng::frandom(-0.05f, 0.15f);
 
-	trumpet->setColor(glm::vec3(0.4f + 0.6f * light, std::powf(light, 0.75f), 0.15f + 0.85f * std::powf(light, 1.5f)));
-
-
-	if (!spehs::rng::irandom(0, 5))
-	{
 		fishes.push_back(ObjectCreator::createFish());
 		fishes.back()->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/fish.png"));
 		fishes.back()->getComponent<spehs::Sprite>()->setSize(80.0f, 80.0f);
@@ -599,7 +681,10 @@ void Environment::update()
 		{
 			food -= BIRD_DAMAGE;
 
-			sfxManager.playSound("Sounds/damage" + std::to_string(spehs::rng::irandom(1, 3)) + ".wav", spehs::getActiveBatchManager()->getCamera2D()->position, 1.0f);
+			if (!dead)
+			{
+				sfxManager.playSound("Sounds/damage" + std::to_string(spehs::rng::irandom(1, 3)) + ".wav", spehs::getActiveBatchManager()->getCamera2D()->position, 1.0f);
+			}
 
 			delete birds[i];
 			birds[i] = birds.back();

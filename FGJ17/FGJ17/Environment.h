@@ -14,10 +14,6 @@
 namespace spehs{ namespace audio{ class SoundSource; } class GameObject; class Polygon; class GUIRectangle; class Line; }
 class Environment
 {
-	static glm::vec3 seaColor;
-	static float sunPosition;
-	static float light;
-	static int day;
 public:
 	Environment();
 	~Environment();
@@ -25,6 +21,9 @@ public:
 	void update();
 
 	void buyPotato();
+
+	bool getDead(){ return dead; }
+	int score;
 
 private:
 	std::vector<spehs::GameObject*> birds;
@@ -55,6 +54,10 @@ private:
 	spehs::Polygon* fingerBase;
 	spehs::Polygon* fingerHighlight;
 	float fingerCooldown;
+
+	float fishSpawnTimer = 0.0f;
+
+	bool dead = false;
 
 	bool tool = true; //true = snare, false = trumpet
 	bool fishing = false;

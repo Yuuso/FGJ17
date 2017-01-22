@@ -23,8 +23,8 @@ WaveMotion::~WaveMotion()
 void WaveMotion::update()
 {
 	pos = ownerObject->getComponent<CirclePosition>()->getPosition();
-	value += spehs::time::getDeltaTimeAsSeconds();
-	ownerObject->getComponent<CirclePosition>()->setPosition(pos + factor * glm::vec3(sin(value) * 0.001f, factor * cos(value * 0.8f), factor * sin(value * 0.1f) * 0.0001f));
+	value += spehs::time::getDeltaTimeAsSeconds() / 2.0f;
+	ownerObject->getComponent<CirclePosition>()->setPosition(pos + factor * glm::vec3(sin(value) * 0.001f, cos(value * 0.8f), sin(value * 0.1f) * 0.0001f));
 }
 
 void WaveMotion::setValue(const float _value)

@@ -3,6 +3,8 @@
 
 #include "Environment.h"
 
+#include <ExtendedEngine/ApplicationManager.h>
+
 #include <SpehsEngine/InputManager.h>
 #include <SpehsEngine/Camera2D.h>
 #include <SpehsEngine/Time.h>
@@ -11,6 +13,9 @@
 #include <SpehsEngine/TextureManager.h>
 #include <SpehsEngine/ApplicationData.h>
 #include <SpehsEngine/AudioEngine.h>
+#include <SpehsEngine/Polygon.h>
+#include <SpehsEngine/Mathematics.h>
+#include <SpehsEngine/Text.h>
 
 #include <iostream>
 #include <thread>
@@ -34,6 +39,11 @@ GameState::~GameState()
 	{
 		delete environment;
 	}
+
+	fader->destroy();
+	endscreen->destroy();
+	endText->destroy();
+
 	if (instance == this)
 		instance = nullptr;
 }
@@ -54,6 +64,26 @@ void GameState::init()
 
 	environment = new Environment;
 
+	fader = spehs::Polygon::create(4, INT16_MAX - 1, applicationData->getWindowWidth(), applicationData->getWindowHeight());
+	fader->setColor(spehs::BLACK);
+	fader->setColorAlpha(1.0f);
+	fader->setPosition(applicationData->getWindowWidthHalf(), applicationData->getWindowHeightHalf());
+	fader->setCameraMatrixState(false);
+
+	endscreen = spehs::Polygon::create(4, INT16_MAX, applicationData->getWindowWidth(), applicationData->getWindowHeight());
+	endscreen->setTexture(textureManager->getTextureData("Textures/crow.png"));
+	endscreen->setPosition(applicationData->getWindowWidthHalf(), applicationData->getWindowHeightHalf());
+	endscreen->setCameraMatrixState(false);
+	endscreen->setColorAlpha(0.0f);
+
+	endText = spehs::Text::create("", INT16_MAX);
+	endText->setFont(applicationData->GUITextFontPath, 24);
+	endText->setCameraMatrixState(false);
+	endText->setColor(0.6f, 0.6f, 0.65f);
+	endText->setPosition(applicationData->getWindowWidthHalf(), applicationData->getWindowHeightHalf());
+	endText->setAlpha(0.0f);
+
+
 	spehs::audio::AudioEngine::setListenerGain(applicationData->masterVolume);
 }
 
@@ -63,6 +93,12 @@ bool GameState::update()
 	{
 		return false;
 	}
+
+	if ((inputManager->isKeyDown(KEYBOARD_LCTRL) || inputManager->isKeyDown(KEYBOARD_RCTRL)) && inputManager->isKeyDown(KEYBOARD_R))
+	{
+		extspehs::ApplicationManager::setState(new GameState);
+	}
+
 
 	//Camera
 	static const float movementSpeed = 0.5f;
@@ -78,7 +114,7 @@ bool GameState::update()
 	}
 	if (abs(inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) > applicationData->getWindowWidthHalf() / 2.0f)
 	{
-		cameraRotation += spehs::time::getDeltaTimeAsSeconds() * (inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) * 0.003f;
+		cameraRotation += spehs::time::getDeltaTimeAsSeconds() * (inputManager->getMouseCoords().x - applicationData->getWindowWidthHalf()) * 0.001f;
 	}
 	
 	if (cameraRotation > 2.0f * PI)
@@ -86,7 +122,37 @@ bool GameState::update()
 	if (cameraRotation < 0.0f)
 		cameraRotation = 2.0f * PI;
 
-	camera->position = glm::vec2(cameraRotation * rotationToPosition, 0.0f);
+	if (!environment->getDead())
+	{
+		camera->position = glm::vec2(cameraRotation * rotationToPosition, 0.0f);
+		fader->setColorAlpha(spehs::lerp(fader->getColorAlpha(), 0.0f, 0.1f * spehs::time::getDeltaTimeAsSeconds()));
+	}
+	else
+	{
+		fader->setColorAlpha(spehs::lerp(fader->getColorAlpha(), 1.0f, 0.13f * spehs::time::getDeltaTimeAsSeconds()));
+
+		if (textTimer < 0.0f)
+		{
+			if (environment->score == 1)
+			{
+				endText->setString("You survived for 1 day...");
+			}
+			else
+			{
+				endText->setString("You survived for " + std::to_string(environment->score) + " days...");
+			}
+			endText->setAlpha(spehs::lerp(endText->getColor().a, 1.0f, 0.1f * spehs::time::getDeltaTimeAsSeconds()));
+		}
+		else
+		{
+			textTimer -= spehs::time::getDeltaTimeAsSeconds();
+		}
+
+		if (fader->getColorAlpha() > 0.95f)
+		{
+			endscreen->setColorAlpha(spehs::lerp(endscreen->getColorAlpha(), 1.0f, 0.11f * spehs::time::getDeltaTimeAsSeconds()));
+		}
+	}
 	camera->update();
 
 	environment->update();

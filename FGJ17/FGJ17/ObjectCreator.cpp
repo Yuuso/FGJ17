@@ -42,7 +42,7 @@ spehs::GameObject* ObjectCreator::createWaves()
 	result->addComponent<spehs::Sprite>();
 	result->addComponent<CirclePosition>();
 	result->addComponent<WaveMotion>();
-	result->getComponent<WaveMotion>()->setFactor(0.7f);
+	result->getComponent<WaveMotion>()->setFactor(0.25);
 
 	return result;
 }

@@ -3,6 +3,7 @@
 
 #include <SpehsEngine/SoundSource.h>
 #include <SpehsEngine/AudioManager.h>
+#include <SpehsEngine/ApplicationData.h>
 
 #include <algorithm>
 
@@ -54,6 +55,6 @@ void SFXManager::playSound(const std::string& _file, const glm::vec2& _position,
 	activeSounds.back()->setPosition(glm::vec2(_position.x / SOUNDFACTOR, _position.y / SOUNDFACTOR));
 	activeSounds.back()->setZ(distance * 3.0f);
 	activeSounds.back()->setPitch(_pitch);
-	activeSounds.back()->setGain(_gain);
+	activeSounds.back()->setGain(_gain * applicationData->sfxVolume);
 	activeSounds.back()->play();
 }

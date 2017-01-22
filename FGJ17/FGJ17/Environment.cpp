@@ -115,6 +115,10 @@ void Environment::Background::update()
 
 Environment::Environment() : fingerCooldown(0.0f)
 {
+	day = 1;
+	sunPosition = 0.0f;
+	light = 1.0f;
+
 	float factorX = float(applicationData->getWindowHeight()) / 1920.0f;
 	backgroundLeft = new Background(-4000.0f);
 	backgroundCenter = new Background(4000.0f);

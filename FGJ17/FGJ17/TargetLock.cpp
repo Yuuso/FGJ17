@@ -7,6 +7,7 @@
 #include <SpehsEngine/ApplicationData.h>
 #include <SpehsEngine/Polygon.h>
 #include <SpehsEngine/Sprite.h>
+#include <SpehsEngine/BatchManager.h>
 #include "TargetLock.h"
 #include "CirclePosition.h"
 #include "Environment.h"
@@ -51,7 +52,7 @@ void TargetLock::update()
 	const glm::vec2 windowCenter = glm::vec2(applicationData->getWindowWidthHalf(), applicationData->getWindowHeightHalf());
 	const float radToWindowCorner = spehs::magnitude(windowCenter);
 	const float rad = std::max(ownerObject->getComponent<spehs::Sprite>()->getSpritePolygon()->getHeight(), ownerObject->getComponent<spehs::Sprite>()->getSpritePolygon()->getWidth());
-	const glm::vec2 pos(applicationData->getWindowWidthHalf() + ownerObject->getComponent<CirclePosition>()->getPosition().x * rotationToPosition - GameState::instance->getCamera().position.x, applicationData->getWindowHeightHalf() + ownerObject->getComponent<spehs::Sprite>()->getSpritePolygon()->getPosition().y);
+	const glm::vec2 pos(applicationData->getWindowWidthHalf() + ownerObject->getComponent<CirclePosition>()->getPosition().x * rotationToPosition - spehs::getActiveBatchManager()->getCamera2D()->position.x, applicationData->getWindowHeightHalf() + ownerObject->getComponent<spehs::Sprite>()->getSpritePolygon()->getPosition().y);
 
 	if (pos.x < 0.0f || pos.x > applicationData->getWindowWidth())
 	{

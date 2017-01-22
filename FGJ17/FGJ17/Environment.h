@@ -7,7 +7,7 @@
 #include <glm/vec3.hpp>
 
 
-#define DAY_CYCLE_SECONDS 45.0f
+#define DAY_CYCLE_SECONDS 200.0f
 #define MAX_SPAWN_HEIGHT 100.0f
 
 

@@ -449,7 +449,7 @@ void Environment::update()
 							int speechNum = spehs::rng::irandom(1, 7);
 							speech->setSound(spehs::AudioManager::instance->loadWAVE("Sounds/speech" + std::to_string(speechNum) + ".wav"));
 							speech->play();
-							music->setGain(0.3f);
+							music->setGain(applicationData->musicVolume * 0.3f);
 							sfxManager.playSound("Sounds/fishjump.wav", caught->getComponent<spehs::Transform2D>()->getPosition(), caught->getComponent<CirclePosition>()->getPosition().z, 0.9f, 3.5f);
 						}
 						else
@@ -740,10 +740,10 @@ void Environment::nextMusic()
 {
 	switch (musicName)
 	{
-	case MusicName::Day1: musicName = MusicName::Night1;
-	case MusicName::Day2: musicName = MusicName::Night2;
-	case MusicName::Night1: musicName = MusicName::Day2;
-	case MusicName::Night2: musicName = MusicName::Day1;
+	case MusicName::Day1: musicName = MusicName::Night1; break;
+	case MusicName::Day2: musicName = MusicName::Night2; break;
+	case MusicName::Night1: musicName = MusicName::Day2; break;
+	case MusicName::Night2: musicName = MusicName::Day1; break;
 	}
 	music->setSound("Music/" + musicNametoString(musicName) + ".wav");
 	music->play();

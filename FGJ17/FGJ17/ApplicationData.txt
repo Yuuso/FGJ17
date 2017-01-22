@@ -1,5 +1,5 @@
 Window width: 1920
-Window height: 1080
+Window height: 1054
 Window mode: 0
 Show FPS: 1
 Max FPS: 200

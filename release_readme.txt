@@ -1,0 +1,1 @@
+The game can be run on Windows platform by executing the .exe file

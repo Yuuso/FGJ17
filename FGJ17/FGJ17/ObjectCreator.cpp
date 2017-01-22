@@ -23,6 +23,7 @@ spehs::GameObject* ObjectCreator::createBird()
 	result->getComponent<spehs::AnimatedSprite>()->setAnimation(glm::ivec2(64, 32), 1, 5, 5);
 	result->getComponent<spehs::AnimatedSprite>()->setAnimationSpeed(0.05f);
 	result->addComponent<WaveMotion>();
+	result->getComponent<WaveMotion>()->setFactor(0.15f);
 
 	return result;
 }
@@ -42,7 +43,7 @@ spehs::GameObject* ObjectCreator::createWaves()
 	result->addComponent<spehs::Sprite>();
 	result->addComponent<CirclePosition>();
 	result->addComponent<WaveMotion>();
-	result->getComponent<WaveMotion>()->setFactor(0.25);
+	result->getComponent<WaveMotion>()->setFactor(0.3f);
 
 	return result;
 }

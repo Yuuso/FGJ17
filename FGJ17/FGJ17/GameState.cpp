@@ -27,11 +27,8 @@
 extern const float rotationToPosition = 1273.239544735164f;
 extern const float SOUNDFACTOR = 1000.0f;
 
-GameState* GameState::instance = nullptr;
 GameState::GameState()
 {
-	if (!instance)
-		instance = this;
 }
 GameState::~GameState()
 {
@@ -43,9 +40,6 @@ GameState::~GameState()
 	fader->destroy();
 	endscreen->destroy();
 	endText->destroy();
-
-	if (instance == this)
-		instance = nullptr;
 }
 
 void GameState::init()
@@ -89,6 +83,7 @@ void GameState::init()
 
 bool GameState::update()
 {
+	std::this_thread::sleep_for(std::chrono::milliseconds(3));
 	if (inputManager->isKeyPressed(KEYBOARD_ESCAPE))
 	{
 		return false;

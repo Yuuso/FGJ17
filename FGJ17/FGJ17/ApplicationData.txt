@@ -5,7 +5,7 @@ Show FPS: 1
 Max FPS: 200
 VSync: 0
 MSAA: 4
-Master volume: 75
+Master volume: 79
 Music volume: 75
 SFX volume: 75
 Console text size: 12

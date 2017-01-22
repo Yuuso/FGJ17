@@ -3,6 +3,8 @@
 
 #include <ExtendedEngine/State.h>
 
+#include <vector>
+
 
 namespace spehs{ class Polygon; class Text; }
 class Environment;
@@ -21,6 +23,7 @@ private:
 	spehs::Polygon* fader;
 	spehs::Polygon* endscreen;
 	spehs::Text* endText;
+	std::vector<spehs::Text*> credits;
 	float textTimer = 3.0f;
 };
 

@@ -17,6 +17,8 @@
 #include <SpehsEngine/Mathematics.h>
 #include <SpehsEngine/Text.h>
 
+#include <glm/vec2.hpp>
+
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -76,6 +78,63 @@ void GameState::init()
 	endText->setColor(0.6f, 0.6f, 0.65f);
 	endText->setPosition(applicationData->getWindowWidthHalf(), applicationData->getWindowHeightHalf());
 	endText->setAlpha(0.0f);
+
+	
+	credits.push_back(spehs::Text::create("CREDITS", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, 0.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("Juuso", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 60.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("\tProgramming, Graphics", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 30.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("Teo", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 45.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("\tGraphics, Programming", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 30.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("Jussi-Pekka", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 45.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("\tLore, Narration, Graphics", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 30.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("Ossi", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 45.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("\tSound, Music", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 30.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("Tatu", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 45.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
+	credits.push_back(spehs::Text::create("\tSound, Music", INT16_MAX));
+	credits.back()->setFont(applicationData->GUITextFontPath, 20);
+	credits.back()->setPosition(applicationData->getWindowWidthHalf() / 6.0f, credits.end()[-2]->getPosition().y - 30.0f);
+	credits.back()->setColor(0.6f, 0.6f, 0.65f);
+	credits.back()->setAlpha(0.0f);
 
 
 	spehs::audio::AudioEngine::setListenerGain(applicationData->masterVolume);
@@ -146,6 +205,12 @@ bool GameState::update()
 		if (fader->getColorAlpha() > 0.95f)
 		{
 			endscreen->setColorAlpha(spehs::lerp(endscreen->getColorAlpha(), 1.0f, 0.11f * spehs::time::getDeltaTimeAsSeconds()));
+
+			for (unsigned i = 0; i < credits.size(); i++)
+			{
+				credits[i]->setPosition(credits[i]->getPosition() + glm::vec2(0.0f, 40.0f * spehs::time::getDeltaTimeAsSeconds()));
+				credits[i]->setAlpha(1.0f - abs((credits[i]->getPosition().y - applicationData->getWindowHeightHalf()) / applicationData->getWindowHeightHalf()));
+			}
 		}
 	}
 	camera->update();

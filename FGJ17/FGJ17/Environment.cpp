@@ -35,10 +35,7 @@
 
 //~~~~~~~~TODO~~~~~~~~
 /*
-- waves!
-- finger charges
 - music
-- sun/moon
 - credits
 */
 
@@ -290,7 +287,7 @@ void Environment::update()
 	Cloud::highlightColor = glm::vec3(std::powf(light, 0.4f) * 0.85f, std::powf(light, 0.7f) * 0.85f, std::powf(light, 0.9f) * 1.0f);
 	waveSounds->setGain(spehs::lerp(waveSounds->getGain(), 1.0f, 0.2f * spehs::time::getDeltaTimeAsSeconds()));
 
-	if (food <= 0.0f)
+	if (food <= 0.0f || inputManager->isKeyPressed(KEYBOARD_K))
 	{
 		if (!dead)
 		{
@@ -302,6 +299,8 @@ void Environment::update()
 			ammunitionLogo->setRenderState(false);
 			foodLogo->setRenderState(false);
 			buyButton->setRenderState(false);
+			fingerBase->setRenderState(false);
+			fingerHighlight->setRenderState(false);
 
 			trumpet->setRenderState(false);
 			snare->setRenderState(false);

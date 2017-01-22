@@ -7,7 +7,7 @@
 #include <glm/vec3.hpp>
 
 
-#define DAY_CYCLE_SECONDS 200.0f
+#define DAY_CYCLE_SECONDS 120.0f
 #define MAX_SPAWN_HEIGHT 100.0f
 #define FINGER_COST 0.05f
 #define BIRD_MIN_SPEED 0.5

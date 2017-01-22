@@ -8,7 +8,7 @@
 
 int main()
 {
-	extspehs::ApplicationManager::init("FGJ17", new GameState);
+	extspehs::ApplicationManager::init("Rotator-Män 2", new GameState);
 	extspehs::ApplicationManager::uninit();
 	return 0;
 }

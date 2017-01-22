@@ -10,6 +10,7 @@
 #include <SpehsEngine/SpehsEngine.h>
 #include <SpehsEngine/TextureManager.h>
 #include <SpehsEngine/ApplicationData.h>
+#include <SpehsEngine/AudioEngine.h>
 
 #include <iostream>
 #include <thread>
@@ -19,6 +20,7 @@
 
 
 extern const float rotationToPosition = 1273.239544735164f;
+extern const float SOUNDFACTOR = 1000.0f;
 
 GameState* GameState::instance = nullptr;
 GameState::GameState()
@@ -48,8 +50,11 @@ void GameState::init()
 	textureManager->preloadTexture("Textures/trump.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
 	textureManager->preloadTexture("Textures/finger.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
 	textureManager->preloadTexture("Textures/fish.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
+	textureManager->preloadTexture("Textures/hitmarker.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest);
 
 	environment = new Environment;
+
+	spehs::audio::AudioEngine::setListenerGain(applicationData->masterVolume);
 }
 
 bool GameState::update()
@@ -85,6 +90,8 @@ bool GameState::update()
 	camera->update();
 
 	environment->update();
+
+	spehs::audio::AudioEngine::setListenerPosition(camera->position / SOUNDFACTOR);
 	
 	return true;
 }

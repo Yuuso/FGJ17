@@ -11,5 +11,7 @@ public:
 	static spehs::GameObject* createWaves();
 	static spehs::GameObject* createFish();
 	static spehs::GameObject* createCloud();
+	static spehs::GameObject* createHitMarker();
+	static spehs::GameObject* createBobber();
 };
 

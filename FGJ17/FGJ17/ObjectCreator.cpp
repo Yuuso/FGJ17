@@ -4,6 +4,7 @@
 #include "CirclePosition.h"
 #include "WaveMotion.h"
 #include "Cloud.h"
+#include "HitMarker.h"
 
 #include <SpehsEngine/RNG.h>
 #include <SpehsEngine/GameObject.h>
@@ -41,6 +42,7 @@ spehs::GameObject* ObjectCreator::createWaves()
 	result->addComponent<spehs::Sprite>();
 	result->addComponent<CirclePosition>();
 	result->addComponent<WaveMotion>();
+	result->getComponent<WaveMotion>()->setFactor(0.7f);
 
 	return result;
 }
@@ -64,6 +66,32 @@ spehs::GameObject* ObjectCreator::createCloud()
 	cloud.baseSprite->setTexture(textureManager->getTextureData("Textures/cloud_base" + std::to_string(cloudIndex) + ".png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest));
 	cloud.createHighlight(cloudIndex);
 	result->addComponent<CirclePosition>()->setVelocity(glm::vec3(std::powf(spehs::rng::frandom(0.0f, 1.0f), 0.5f) * spehs::rng::frandom(-0.01f, 0.01f), 0.0f, 0.0f));	
+
+	return result;
+}
+spehs::GameObject* ObjectCreator::createHitMarker()
+{
+	spehs::GameObject* result = new spehs::GameObject;
+	result->addComponent<spehs::Transform2D>();
+	result->addComponent<spehs::Sprite>();
+	result->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/hitmarker.png"));
+	result->getComponent<spehs::Sprite>()->setSize(80.0f, 80.0f);
+	result->getComponent<spehs::Sprite>()->setDepth(30000);
+	result->addComponent<HitMarker>();
+
+	return result;
+}
+spehs::GameObject* ObjectCreator::createBobber()
+{
+	spehs::GameObject* result = new spehs::GameObject;
+	result->addComponent<spehs::Transform2D>();
+	result->addComponent<spehs::Sprite>();
+	result->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/bobber.png"));
+	result->getComponent<spehs::Sprite>()->setSize(80.0f, 80.0f);
+	result->getComponent<spehs::Sprite>()->setDepth(30000);
+	result->addComponent<CirclePosition>();
+	result->addComponent<WaveMotion>();
+	result->getComponent<WaveMotion>()->setFactor(0.5f);
 
 	return result;
 }

@@ -1,13 +1,17 @@
 
 #pragma once
-#define DAY_CYCLE_SECONDS 45.0f
-#define MAX_SPAWN_DISTANCE 100.0f
+
+#include "SFXManager.h"
 
 #include <vector>
 #include <glm/vec3.hpp>
 
 
-namespace spehs{ class GameObject; class Polygon; }
+#define DAY_CYCLE_SECONDS 45.0f
+#define MAX_SPAWN_HEIGHT 100.0f
+
+
+namespace spehs{ namespace audio{ class SoundSource; } class GameObject; class Polygon; class GUIRectangle; class Line; }
 class Environment
 {
 	static glm::vec3 seaColor;
@@ -20,12 +24,15 @@ public:
 
 	void update();
 
+	void buyPotato();
+
 private:
 	std::vector<spehs::GameObject*> birds;
 	std::vector<spehs::GameObject*> potatos;
 	std::vector<spehs::GameObject*> waves;
 	std::vector<spehs::GameObject*> clouds;
 	std::vector<spehs::GameObject*> fishes;
+	std::vector<spehs::GameObject*> hitmarkers;
 	struct Background
 	{
 		Background(const float x);
@@ -41,8 +48,36 @@ private:
 	Background* backgroundCenter;
 	Background* backgroundRight;
 	spehs::Polygon* trumpet;
+	spehs::Polygon* snare;
+	spehs::Line* snareLine;
+	spehs::GameObject* bobber;
+	spehs::GameObject* caught;
 	spehs::Polygon* fingerBase;
 	spehs::Polygon* fingerHighlight;
 	float fingerCooldown;
+
+	bool tool = true; //true = snare, false = trumpet
+	bool fishing = false;
+	bool catchingFish = false;
+	float fishTimer;
+
+	float food = 10.0f;
+	static const unsigned int FISH_TO_POTATO = 10;
+	int ammunition = 30;
+
+	spehs::Polygon* foodBar;
+	spehs::Polygon* foodLogo;
+	spehs::Polygon* ammunitionBar;
+	spehs::Polygon* ammunitionLogo;
+	spehs::GUIRectangle* buyButton;
+
+	bool casetteActive = false;
+	spehs::Polygon* casette;
+	spehs::audio::SoundSource* speech;
+
+	spehs::audio::SoundSource* music;
+	spehs::audio::SoundSource* waveSounds;
+
+	SFXManager sfxManager;
 };
 

@@ -17,9 +17,11 @@ public:
 	void update() override;
 
 	void setValue(const float _value);
+	void setFactor(const float _factor);
 
 private:
 	float value;
+	float factor = 1.0f;
 	glm::vec3 pos;
 };
 

@@ -59,7 +59,7 @@ void TargetLock::update()
 			lines[i]->setRenderState(false);
 		return;
 	}
-	const float distanceFactor = std::powf(std::min(1.0f, abs(ownerObject->getComponent<CirclePosition>()->getPosition().z / (0.5f * MAX_SPAWN_DISTANCE))), 0.15f);
+	const float distanceFactor = std::powf(std::min(1.0f, abs(ownerObject->getComponent<CirclePosition>()->getPosition().z / (0.5f * MAX_SPAWN_HEIGHT))), 0.15f);
 	for (unsigned i = 0; i < 12; i++)
 	{
 		lines[i]->setRenderState(true);

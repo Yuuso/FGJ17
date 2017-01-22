@@ -24,10 +24,15 @@ void WaveMotion::update()
 {
 	pos = ownerObject->getComponent<CirclePosition>()->getPosition();
 	value += spehs::time::getDeltaTimeAsSeconds();
-	ownerObject->getComponent<CirclePosition>()->setPosition(pos + glm::vec3(sin(value) * 0.001f, cos(value * 0.8f), sin(value * 0.1f) * 0.0001f));
+	ownerObject->getComponent<CirclePosition>()->setPosition(pos + factor * glm::vec3(sin(value) * 0.001f, factor * cos(value * 0.8f), factor * sin(value * 0.1f) * 0.0001f));
 }
 
 void WaveMotion::setValue(const float _value)
 {
 	value = _value;
+}
+
+void WaveMotion::setFactor(const float _factor)
+{
+	factor = _factor;
 }

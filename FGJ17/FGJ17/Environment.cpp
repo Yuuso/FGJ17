@@ -690,7 +690,7 @@ void Environment::update()
 	{
 		if (sin(sunPosition + TWO_PI / DAY_CYCLE_SECONDS * 2.0f/*Seconds spawning begins/ends in advance*/) < 0.2f)
 		{
-			birds[i]->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f, -birds[i]->getComponent<CirclePosition>()->getVelocity().y * 0.01f, -spehs::rng::frandom(BIRD_MIN_SPEED, BIRD_MAX_SPEED)));
+			birds[i]->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f, 0.0f, -spehs::rng::frandom(BIRD_MIN_SPEED, BIRD_MAX_SPEED)));
 		}
 		birds[i]->update();
 		birds[i]->getComponent<spehs::Sprite>()->setDepth(-birds[i]->getComponent<CirclePosition>()->getPosition().z);

@@ -7,7 +7,7 @@
 #include <glm/vec3.hpp>
 
 
-#define DAY_CYCLE_SECONDS 120.0f
+#define DAY_CYCLE_SECONDS 132.0f
 #define MAX_SPAWN_HEIGHT 100.0f
 #define FINGER_COST 0.05f
 #define BIRD_MIN_SPEED 0.5
@@ -29,6 +29,7 @@ public:
 	int score;
 
 private:
+	void nextMusic();
 	std::vector<spehs::GameObject*> birds;
 	std::vector<spehs::GameObject*> potatos;
 	std::vector<spehs::GameObject*> waves;
@@ -83,6 +84,10 @@ private:
 
 	spehs::audio::SoundSource* music;
 	spehs::audio::SoundSource* waveSounds;
+
+	enum class MusicName
+	{Day1, Night1, Day2, Night2} musicName;
+	std::string musicNametoString(MusicName musicName);
 
 	SFXManager sfxManager;
 };

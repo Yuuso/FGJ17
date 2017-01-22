@@ -217,8 +217,15 @@ Environment::Environment() : fingerCooldown(0.0f)
 	waveSounds->setSound(spehs::AudioManager::instance->loadWAVE("Sounds/aallot.wav"));
 	waveSounds->play();
 	
+	spehs::AudioManager::instance->loadWAVE("Music/Day1.wav");
+	spehs::AudioManager::instance->loadWAVE("Music/Day2.wav");
+	spehs::AudioManager::instance->loadWAVE("Music/Night1.wav");
+	spehs::AudioManager::instance->loadWAVE("Music/Night2.wav");
 	music = new spehs::audio::SoundSource;
 	music->setPriority(0);
+	music->setSound("Music/Day1.wav");
+	music->play();
+	musicName = MusicName::Day1;
 }
 
 Environment::~Environment()
@@ -272,6 +279,8 @@ Environment::~Environment()
 
 void Environment::update()
 {
+	if (!music->isPlaying())
+		nextMusic();
 	sfxManager.update();
 	sunPosition += spehs::time::getDeltaTimeAsSeconds() * TWO_PI / DAY_CYCLE_SECONDS;
 	while (sunPosition > TWO_PI)
@@ -720,5 +729,29 @@ void Environment::buyPotato()
 		ammunition += FISH_TO_POTATO;
 
 		sfxManager.playSound("Sounds/bling1.wav", spehs::getActiveBatchManager()->getCamera2D()->position, 1.0f);
+	}
+}
+
+void Environment::nextMusic()
+{
+	switch (musicName)
+	{
+	case MusicName::Day1: musicName = MusicName::Night1;
+	case MusicName::Day2: musicName = MusicName::Night2;
+	case MusicName::Night1: musicName = MusicName::Day2;
+	case MusicName::Night2: musicName = MusicName::Day1;
+	}
+	music->setSound("Music/" + musicNametoString(musicName) + ".wav");
+	music->play();
+}
+
+std::string Environment::musicNametoString(MusicName _musicName)
+{
+	switch (_musicName)
+	{
+	default: return "Day1";
+	case MusicName::Day2: return "Day2";
+	case MusicName::Night1: return "Night1";
+	case MusicName::Night2: return "Night2";
 	}
 }

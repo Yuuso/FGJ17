@@ -9,6 +9,9 @@
 
 #define DAY_CYCLE_SECONDS 200.0f
 #define MAX_SPAWN_HEIGHT 100.0f
+#define FINGER_COST 0.05f
+#define BIRD_MIN_SPEED 0.5
+#define BIRD_MAX_SPEED 1.5f
 
 
 namespace spehs{ namespace audio{ class SoundSource; } class GameObject; class Polygon; class GUIRectangle; class Line; }

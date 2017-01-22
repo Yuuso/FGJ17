@@ -5,6 +5,7 @@ namespace spehs
 {
 	class Polygon;
 	class Line;
+	class Text;
 }
 
 class TargetLock : public spehs::Component
@@ -18,5 +19,6 @@ public:
 private:
 	void initialize();
 	spehs::Line* lines[12];
+	spehs::Text* text;
 	float animationState;
 };

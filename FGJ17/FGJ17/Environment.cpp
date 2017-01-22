@@ -537,18 +537,24 @@ void Environment::update()
 		{
 			fingerBase->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerBase->getPosition().y, (float) -applicationData->getWindowHeightHalf() / 2.0f, 0.2f));
 			fingerHighlight->setPosition(spehs::getActiveBatchManager()->getCamera2D()->position.x + applicationData->getWindowWidthHalf() / 2.0f, spehs::lerp(fingerHighlight->getPosition().y, (float) -applicationData->getWindowHeightHalf() / 2.0f, 0.2f));
-			if (fingerCooldown <= 0.0f)
+			if (fingerCooldown <= 0.0f && food >= FINGER_COST * 1.25f)
 			{
-				fingerCooldown = 0.125f;
+				food -= FINGER_COST * 0.25f;
+				fingerCooldown = 0.5f;
 				for (unsigned i = 0; i < birds.size(); i++)
 				{
+					food -= FINGER_COST;
+					//if (birds[i]->getComponent<CirclePosition>()->getVelocity().z <= -BIRD_MIN_SPEED)
 					float angleToBird = birds[i]->getComponent<CirclePosition>()->getPosition().x - spehs::getActiveBatchManager()->getCamera2D()->position.x / rotationToPosition;
 					while (abs(angleToBird) > PI)
 						angleToBird -= TWO_PI * /*sign*/(abs(angleToBird) / angleToBird);
 					if (abs(angleToBird) < PI * 0.1f)
 					{//Bird within field of view
 						if (birds[i]->getComponent<TargetLock>() == nullptr)
+						{
 							birds[i]->addComponent<TargetLock>();
+							break;
+						}
 					}
 				}
 			}
@@ -684,7 +690,7 @@ void Environment::update()
 	{
 		if (sin(sunPosition + TWO_PI / DAY_CYCLE_SECONDS * 2.0f/*Seconds spawning begins/ends in advance*/) < 0.2f)
 		{
-			birds[i]->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f, 0.0f, spehs::rng::frandom(-1.5f, -0.5f)));
+			birds[i]->getComponent<CirclePosition>()->setVelocity(glm::vec3(0.0f, -birds[i]->getComponent<CirclePosition>()->getVelocity().y * 0.01f, -spehs::rng::frandom(BIRD_MIN_SPEED, BIRD_MAX_SPEED)));
 		}
 		birds[i]->update();
 		birds[i]->getComponent<spehs::Sprite>()->setDepth(-birds[i]->getComponent<CirclePosition>()->getPosition().z);

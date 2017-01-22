@@ -76,7 +76,7 @@ Environment::Background::Background(const float x)
 	skyShade = spehs::Polygon::create(spehs::Shape::BUTTON, backgroundDepth + 2, 8000, applicationData->getWindowHeightHalf());
 	skyShade->setPosition(sky->getX(), sky->getY());
 
-	stars = spehs::Polygon::create(5, backgroundDepth + 3, 8000, 540);
+	stars = spehs::Polygon::create(4, backgroundDepth + 3, 8000, 540);
 	stars->setPosition(x, 230.0f);
 	stars->setTexture(textureManager->getTextureData("Textures/stars.png", spehs::TextureFiltering::Nearest, spehs::TextureFiltering::Nearest));
 }

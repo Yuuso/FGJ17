@@ -49,7 +49,7 @@
 
 
 extern const float rotationToPosition;
-const float MIN_LIGHT(0.05f);
+const float MIN_LIGHT(0.01f);
 const float RANDOM_MAGICAL_NIGHT_COLOR_VALUE(0.1f);
 const float LOW_WATERS(500.0f);
 const float BIRD_DAMAGE(0.05f);
@@ -199,6 +199,7 @@ Environment::Environment() : fingerCooldown(0.0f)
 	casette->setPosition(applicationData->getWindowWidth() - casette->getWidth(), applicationData->getWindowHeight() - 400.0f);
 
 	speech = new spehs::audio::SoundSource;
+	speech->setPriority(1);
 	speech->setPitch(0.95f);
 
 	waveSounds = new spehs::audio::SoundSource;
@@ -206,7 +207,11 @@ Environment::Environment() : fingerCooldown(0.0f)
 	waveSounds->setPriority(0);
 	waveSounds->setSound(spehs::AudioManager::instance->loadWAVE("Sounds/aallot.wav"));
 	waveSounds->play();
+	
+	music = new spehs::audio::SoundSource;
+	music->setPriority(0);
 }
+
 Environment::~Environment()
 {
 	delete backgroundLeft;
@@ -336,13 +341,14 @@ void Environment::update()
 				if (catchingFish)
 				{
 					caught = ObjectCreator::createPotato();//wat ever
-					if (!spehs::rng::irandom(0, 15) && !casetteActive)
+					if (!spehs::rng::irandom(0, 0) && !casetteActive)
 					{
 						caught->getComponent<spehs::Sprite>()->setTexture(textureManager->getTextureData("Textures/casette.png"));
 						casetteActive = true;
 						int speechNum = spehs::rng::irandom(1, 7);
 						speech->setSound(spehs::AudioManager::instance->loadWAVE("Sounds/speech" + std::to_string(speechNum) + ".wav"));
 						speech->play();
+						music->setGain(0.3f);
 					}
 					else
 					{
@@ -425,10 +431,12 @@ void Environment::update()
 		{
 			casetteActive = false;
 		}
+		music->setGain(spehs::lerp(music->getGain(), 1.0f, 0.1f));
 	}
 	else
 	{
 		casette->setRenderState(false);
+		music->setGain(spehs::lerp(music->getGain(), 1.0f, 0.1f));
 	}
 
 	
